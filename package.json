@@ -1,0 +1,29 @@
+{
+  "name": "pinterest-clone",
+  "version": "1.0.0",
+  "description": "Pinterest Clone - freeCodeCamp Challenge",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NeckersBOX/pinterest-clone.git"
+  },
+  "author": "Davide Francesco Merico",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/NeckersBOX/pinterest-clone/issues"
+  },
+  "homepage": "https://github.com/NeckersBOX/pinterest-clone#readme",
+  "dependencies": {
+    "express": "^4.14.1"
+  },
+  "devDependencies": {
+    "eslint": "^3.15.0",
+    "gulp": "^3.9.1",
+    "gulp-minify": "0.0.15",
+    "gulp-sass": "^3.1.0"
+  }
+}
