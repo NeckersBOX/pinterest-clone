@@ -31,21 +31,7 @@ const flutter = new Flutter ({
     if ( req.error )
       return;
 
-    const accessToken = req.session.oauthAccessToken;
-    const secret = req.session.oauthAccessTokenSecret;
-    const oauth_verified = req.query.oauth_verifier;
-
-    request (Object.assign ({}, postTwitterOptions, { form: { oauth_verified } }),
-      (err, response, body) => {
-        if ( !err && response.statusCode == 200 ) {
-          console.log ('body', body);
-
-          res.redirect ('/');
-        }
-
-        console.log (err);
-      }
-    );
+    res.redirect ('/');
   }
 });
 
@@ -53,6 +39,18 @@ app.get('/twitter/connect', flutter.connect);
 app.get('/twitter/callback', flutter.auth);
 
 app.get ('/:page?', (req, res, next) => {
+  const oauth_verified = req.query.oauth_verifier;
+
+  request (Object.assign ({}, postTwitterOptions, { form: { oauth_verified } }),
+    (err, response, body) => {
+      if ( !err && response.statusCode == 200 ) {
+        console.log ('body', body);
+      }
+
+      console.log (err);
+    }
+  );
+
   console.warn (req.query);
   console.warn (req.session);
   let pageRequest = req.params.page ? path.basename (req.params.page, '.html') : 'index';
