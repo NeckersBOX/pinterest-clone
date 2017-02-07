@@ -5,7 +5,12 @@ const fs = require ('fs');
 const path = require ('path');
 const Flutter = require ('flutter');
 
+const app = new Express ();
+
+app.use (Express.static ('dist'));
+
 const flutter = new Flutter ({
+  cache: false,
   consumerKey: 'Cia3AnMi7dkhG7JBhrfOQ5Fos',
   consumerSecret: 'Tvji3GD9Zo8vIgLmNxXZOdqhtAxlORYeRbKI3vo23obl4gmWWQ',
   loginCallback: 'https://neckers-pinclone.herokuapp.com/twitter/callback',
@@ -23,10 +28,6 @@ const flutter = new Flutter ({
     res.redirect ('/');
   }
 });
-
-const app = new Express ();
-
-app.use (Express.static ('dist'));
 
 app.get('/twitter/connect', flutter.connect);
 app.get('/twitter/callback', flutter.auth);
