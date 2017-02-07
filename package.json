@@ -1,6 +1,6 @@
 {
   "name": "pinterest-clone",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Pinterest Clone - freeCodeCamp Challenge",
   "main": "server.js",
   "scripts": {
