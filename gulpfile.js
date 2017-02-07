@@ -11,7 +11,7 @@ gulp.task ('sass', () =>
   .pipe (gulp.dest ('dist/css/'))
 );
 
-gulp.task ('minify-js', (cb) =>
+gulp.task ('minify-js', () =>
   gulp.src ('src/js/*.js')
     .pipe (minify ({
       ext: {
@@ -22,7 +22,7 @@ gulp.task ('minify-js', (cb) =>
     .pipe (gulp.dest ('dist/js'))
 );
 
-gulp.task ('build', [ 'sass', 'webpack' ]);
+gulp.task ('build', [ 'sass', 'minify-js' ]);
 gulp.task ('watch', () => {
   gulp.watch ('src/sass/*.sass', [ 'sass' ]);
   gulp.watch ('src/js/*.js', [ 'minify-js' ]);

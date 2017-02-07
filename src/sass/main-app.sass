@@ -1,0 +1,59 @@
+@import 'config'
+
+body
+  color: $base-text
+  font-family: $base-font-family
+
+a
+  text-decoration: none
+  color: $base-link
+
+  &:hover, &:focus
+    color: $base-link-hover
+
+.main-menu
+  background-color: $menu-background
+  color: $menu-text
+  margin: -8px
+  margin-bottom: 8px
+
+  ul
+    list-style-type: none
+    display: inline-block
+    margin: 4px
+    padding: 4px
+
+    li
+      display: inline-block
+      padding: 4px
+      border-right: 1px solid $menu-divider
+
+      &:last-child
+        border-right-width: 0
+
+      a
+        padding: 4px 8px
+        text-transform: uppercase
+        color: $menu-link
+        margin-right: 4px
+
+        &:hover, &:focus
+          color: $menu-link-hover
+          background-color: $menu-background-hover
+
+.social-button
+  float: right
+  margin-right: 4px
+  margin-top: 6px
+  border: 1px solid $social-btn-border
+  background-color: $social-btn-background
+  color: $social-btn-text
+  padding: 5px
+  font-family: $base-font-family
+  font-size: 16px
+  cursor: pointer
+
+  &:hover, &:focus
+    background-color: $social-btn-hover-background
+    color: $social-btn-hover-text
+    border-color: $social-btn-hover-border
