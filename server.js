@@ -4,10 +4,12 @@ const Express = require ('express');
 const fs = require ('fs');
 const path = require ('path');
 const Flutter = require ('flutter');
+const session = require ('express-session');
 
 const app = new Express ();
 
 app.use (Express.static ('dist'));
+app.use (session ({ secret: '$3cR3tC0d3R34lLy$&cR3t!' }));
 
 const flutter = new Flutter ({
   cache: false,
