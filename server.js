@@ -23,7 +23,7 @@ const flutter = new Flutter ({
 
     const accessToken = req.session.oauthAccessToken;
     const secret = req.session.oauthAccessTokenSecret;
-
+    console.warn (req.query);
     // Store away oauth credentials here
     console.warn (req.session);
     // Redirect user back to your app
@@ -35,7 +35,7 @@ app.get('/twitter/connect', flutter.connect);
 app.get('/twitter/callback', flutter.auth);
 
 app.get ('/:page?', (req, res, next) => {
-
+console.warn (req.query);
   console.warn (req.session);
   let pageRequest = req.params.page ? path.basename (req.params.page, '.html') : 'index';
 
