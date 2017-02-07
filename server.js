@@ -7,7 +7,7 @@ const app = new Express ();
 
 app.use (Express.static ('dist'));
 
-app.get ([ '/', '/:page' ], (req, res, next) => {
+app.get ('/:page?', (req, res, next) => {
   let pageRequest = req.params.page ? path.basename (req.params.page, '.html') : 'index';
 
   fs.readFile ('dist/html/' + pageRequest + '.html', 'utf8', (err, data) => {
