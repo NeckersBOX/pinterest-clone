@@ -35,6 +35,8 @@ app.get('/twitter/connect', flutter.connect);
 app.get('/twitter/callback', flutter.auth);
 
 app.get ('/:page?', (req, res, next) => {
+
+  console.warn (req.session);
   let pageRequest = req.params.page ? path.basename (req.params.page, '.html') : 'index';
 
   fs.readFile ('dist/html/' + pageRequest + '.html', 'utf8', (err, data) => {
