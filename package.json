@@ -20,7 +20,8 @@
   "dependencies": {
     "express": "^4.14.1",
     "express-session": "^1.15.0",
-    "flutter": "0.0.5"
+    "flutter": "0.0.5",
+    "request": "^2.79.0"
   },
   "devDependencies": {
     "eslint": "^3.15.0",

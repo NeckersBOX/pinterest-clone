@@ -5,6 +5,16 @@ const fs = require ('fs');
 const path = require ('path');
 const Flutter = require ('flutter');
 const session = require ('express-session');
+const request = require ('request');
+
+const postTwitterOptions = {
+  url: 'https://api.twitter.com/oauth/access_token',
+  method: 'POST',
+  headers: {
+    'User-Agent': 'NeckersPinterestClone/1.0',
+    'Content-Type': 'application/x-www-form-urlencoded'
+  }
+};
 
 const app = new Express ();
 
@@ -23,11 +33,19 @@ const flutter = new Flutter ({
 
     const accessToken = req.session.oauthAccessToken;
     const secret = req.session.oauthAccessTokenSecret;
-    console.warn (req.query);
-    // Store away oauth credentials here
-    console.warn (req.session);
-    // Redirect user back to your app
-    res.redirect ('/');
+    const oauth_verified = req.query.oauth_verifier;
+
+    request (Object.assign ({}, postTwitterOptions, { form: { oauth_verified } }),
+      (err, response, body) => {
+        if ( !err && response.statusCode == 200 ) {
+          console.log ('body', body);
+
+          res.redirect ('/');
+        }
+
+        console.log (err);
+      }
+    );
   }
 });
 
@@ -35,7 +53,7 @@ app.get('/twitter/connect', flutter.connect);
 app.get('/twitter/callback', flutter.auth);
 
 app.get ('/:page?', (req, res, next) => {
-console.warn (req.query);
+  console.warn (req.query);
   console.warn (req.session);
   let pageRequest = req.params.page ? path.basename (req.params.page, '.html') : 'index';
 
