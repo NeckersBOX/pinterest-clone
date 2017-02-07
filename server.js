@@ -25,7 +25,7 @@ const flutter = new Flutter ({
     const secret = req.session.oauthAccessTokenSecret;
 
     // Store away oauth credentials here
-    console.log ('accessToken: ' + accessToken, 'secret: ' + secret);
+    console.warn (req.session);
     // Redirect user back to your app
     res.redirect ('/');
   }
