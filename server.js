@@ -9,6 +9,11 @@ const twitterStrategy = require ('passport-twitter').Strategy;
 const app = new Express ();
 
 app.use (Express.static ('dist'));
+app.use (require ('express-session')({
+  secret: 'r34Lly$3cR3tC0d3',
+  resave: true,
+  saveUninitialized: true
+}));
 
 passport.use (new twitterStrategy (
   {
