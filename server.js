@@ -34,8 +34,7 @@ passport.use (new twitterStrategy (
       image: profile._json.profile_image_url_https
     };
 
-    console.log (profileInfo);
-    cb (null, profile);
+    cb (null, profileInfo);
   }
 ));
 
