@@ -1,7 +1,6 @@
 'use strict';
 
 const Express = require ('express');
-const fs = require ('fs');
 const path = require ('path');
 const passport = require ('passport');
 const twitterStrategy = require ('passport-twitter').Strategy;
@@ -14,6 +13,9 @@ app.use (Express.static ('dist'));
 app.use (require ('morgan')('combined'));
 app.use (require ('cookie-parser')());
 app.use (require ('body-parser').urlencoded ({ extended: true }));
+
+app.set ('view engine', 'ejs');
+app.set ('views', path.join (__dirname, 'src/views'));
 
 app.use (require ('express-session')({
   secret: 'r34Lly$3cR3tC0d3',
@@ -47,6 +49,7 @@ passport.use (new twitterStrategy (
       }
 
       let result = yield pinclone_users.insertOne (profileInfo);
+
       db.close ();
 
       cb (null, profileInfo);
@@ -63,7 +66,7 @@ passport.deserializeUser((obj, cb) => {
 
     let doc = yield pinclone_users.findOne ({ id_str: obj });
     db.close ();
-    console.log ('deserialize', doc);
+
     cb (null, doc);
   }).catch (err => cb (err.stack, null));
 });
@@ -73,34 +76,18 @@ app.use (passport.session ());
 
 app.get ('/auth/twitter', passport.authenticate ('twitter'));
 
-app.get ('/auth/twitter/callback',
-  passport.authenticate ('twitter', { successRedirect: '/', failureRedirect: '/not-found' }));
+app.get ('/auth/twitter/callback', passport.authenticate ('twitter',
+  {
+    successRedirect: '/',
+    failureRedirect: '/'
+  }
+));
 
-app.get ('/:page?', (req, res, next) => {
-  let pageRequest = req.params.page ? path.basename (req.params.page, '.html') : 'index';
-
-  fs.readFile ('dist/html/' + pageRequest + '.html', 'utf8', (err, data) => {
-    if ( err ) {
-      console.log (err);
-      return next ();
-    }
-
-    res.writeHead (200, { 'Content-Type': 'text/html' });
-    res.end (data);
-  });
+app.get (['/', '/index'], (req, res) => {
+  res.render ('index', { auth_check: req.isAuthenticated () });
 });
 
-app.get ('*', (req, res) => {
-  fs.readFile ('dist/html/not-found.html', 'utf8', (err, data) => {
-    if ( err ) {
-      res.status(500).send ('An empty space is around me.. I\'m feeling so lonely.');
-      return;
-    }
-
-    res.writeHead (200, { 'Content-Type': 'text/html' });
-    res.end (data);
-  });
-});
+app.get ('*', (req, res) => res.render ('not-found'));
 
 app.listen (process.env.PORT || 3000, err => {
   if ( err )
@@ -108,3 +95,5 @@ app.listen (process.env.PORT || 3000, err => {
 
   console.log ('Server running at http://localhost:' + (process.env.PORT || 3000));
 });
+
+const isLoggedIn = (req, res, next) => req.isAuthenticated () ? next () : res.redirect ('/');
