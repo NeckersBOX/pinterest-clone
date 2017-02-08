@@ -30,7 +30,7 @@ passport.use (new twitterStrategy (
     };
 
     console.log (profileInfo);
-    cb (null);
+    cb (null, profile);
   }
 ));
 
