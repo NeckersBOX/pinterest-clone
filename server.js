@@ -6,6 +6,7 @@ const passport = require ('passport');
 const twitterStrategy = require ('passport-twitter').Strategy;
 const MongoClient = require ('mongodb').MongoClient;
 const co = require ('co');
+
 const app = new Express ();
 
 app.use (Express.static ('dist'));
@@ -39,7 +40,7 @@ passport.use (new twitterStrategy (
 
     co (function *() {
       const db = yield MongoClient.connect (process.env.mongoURI);
-      const pinclone_users = db.collection ('pincline_users');
+      const pinclone_users = db.collection ('pinclone_users');
 
       let doc = yield pinclone_users.findOne (profileInfo);
       if ( doc ) {
@@ -62,7 +63,7 @@ passport.serializeUser ((user, cb) => cb (null, user.id_str));
 passport.deserializeUser((obj, cb) => {
   co (function *() {
     const db = yield MongoClient.connect (process.env.mongoURI);
-    const pinclone_users = db.collection ('pincline_users');
+    const pinclone_users = db.collection ('pinclone_users');
 
     let doc = yield pinclone_users.findOne ({ id_str: obj });
     db.close ();
@@ -73,6 +74,8 @@ passport.deserializeUser((obj, cb) => {
 
 app.use (passport.initialize ());
 app.use (passport.session ());
+
+const isLoggedIn = (req, res, next) => req.isAuthenticated () ? next () : res.redirect ('/');
 
 app.get ('/auth/twitter', passport.authenticate ('twitter'));
 
@@ -94,6 +97,25 @@ app.get (['/', '/index'], (req, res) => {
   res.render ('index', { auth_check: req.isAuthenticated (), userImages });
 });
 
+app.get ('/addpin', isLoggedIn, (req, res) => res.render ('addpin'));
+app.post ('/addpin', isLoggedIn, (req, res) => {
+  co (function *() {
+    const db = yield MongoClient.connect (process.env.mongoURI);
+    const pinclone_images = db.collection ('pinclone_images');
+
+    let result = yield pinclone_images.insertOne ({
+      user: req.user.id_str,
+      image: req.body.image,
+      description: req.body.description.split ('').slice (0, 32).join (''),
+      date: Date.now ()
+    });
+
+    db.close ();
+
+    res.redirect ('/mypin');
+  }).catch (err => res.end (JSON.stringify ({ error: err.stack })));
+});
+
 app.get ('*', (req, res) => res.render ('not-found'));
 
 app.listen (process.env.PORT || 3000, err => {
@@ -102,5 +124,3 @@ app.listen (process.env.PORT || 3000, err => {
 
   console.log ('Server running at http://localhost:' + (process.env.PORT || 3000));
 });
-
-const isLoggedIn = (req, res, next) => req.isAuthenticated () ? next () : res.redirect ('/');

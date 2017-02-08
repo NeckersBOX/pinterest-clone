@@ -1,0 +1,39 @@
+<html>
+  <head>
+    <title>Pinterest Clone</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="images/favicon.ico" />
+    <link rel="stylesheet" type="text/css" href="css/main-app.css">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  </head>
+  <body>
+    <% include auth_menu %>
+
+    <div class="addpin">
+      <h1>Add Pin</h1>
+      <hr />
+      <img id="img_preview" onerror='this.src="images/noimage.png"' src='images/noimage.png' />
+      <form action="/addpin" method="post">
+        <label>
+          Image Url <input id="image_url" type="text" name="image" placeholder="https://yourimage.com" />
+        </label>
+        <label>
+          Description <input id="image_desc" type="text" name="description" placeholder="Funny cat" />
+          <small>Max 32 characters</small>
+        </label>
+        <input type="submit" value="Add image" />
+      </form>
+    </div>
+
+    <script>
+      $('#image_url').keyup (function () {
+        $('#img_preview').attr ('src', $(this).val ());
+      });
+
+      $('#image_desc').keyup (function () {
+        $(this).val ($(this).val ().split ('').slice (0, 32).join (''));
+      });
+    </script>
+  </body>
+</html>
