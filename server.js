@@ -5,7 +5,8 @@ const fs = require ('fs');
 const path = require ('path');
 const passport = require ('passport');
 const twitterStrategy = require ('passport-twitter').Strategy;
-
+const MongoClient = require ('mongodb').MongoClient;
+const co = require ('co');
 const app = new Express ();
 
 app.use (Express.static ('dist'));
@@ -34,15 +35,30 @@ passport.use (new twitterStrategy (
       image: profile._json.profile_image_url_https
     };
 
-    cb (null, profileInfo);
+    co (function *() {
+      const db = yield MongoClient.connect (process.env.mongoURI);
+      const pinclone_users = db.collection ('pincline_users');
+
+      let result = yield pinclone_users.insertOne (profileInfo);
+      db.close ();
+      
+      cb (null, profileInfo);
+    }).catch (err => cb (err.stack, null));
   }
 ));
 
 passport.serializeUser ((user, cb) => cb (null, user.id_str));
 
-passport.deserializeUser(function(obj, cb) {
-  console.log ('deserializeUser', obj);
-  cb(null, obj);
+passport.deserializeUser((obj, cb) => {
+  co (function *() {
+    const db = yield MongoClient.connect (process.env.mongoURI);
+    const pinclone_users = db.collection ('pincline_users');
+
+    let doc = yield pinclone_users.findOne ({ id_str: obj });
+    db.close ();
+
+    cb (null, doc);
+  }).catch (err => cb (err.stack, null));
 });
 
 app.use (passport.initialize ());
