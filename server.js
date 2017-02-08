@@ -9,6 +9,11 @@ const twitterStrategy = require ('passport-twitter').Strategy;
 const app = new Express ();
 
 app.use (Express.static ('dist'));
+
+app.use (require ('morgan')('combined'));
+app.use (require ('cookie-parser')());
+app.use (require ('body-parser').urlencoded ({ extended: true }));
+
 app.use (require ('express-session')({
   secret: 'r34Lly$3cR3tC0d3',
   resave: true,
@@ -33,6 +38,19 @@ passport.use (new twitterStrategy (
     cb (null, profile);
   }
 ));
+
+passport.serializeUser(function(user, cb) {
+  console.log ('serializeUser', user);
+  cb(null, user);
+});
+
+passport.deserializeUser(function(obj, cb) {
+  console.log ('deserializeUser', obj);
+  cb(null, obj);
+});
+
+app.use (passport.initialize ());
+app.use (passport.session ());
 
 app.get ('/auth/twitter', passport.authenticate ('twitter'));
 
