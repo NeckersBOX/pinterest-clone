@@ -36,8 +36,8 @@ passport.use (new twitterStrategy (
 
 app.get ('/auth/twitter', passport.authenticate ('twitter'));
 
-app.get('/auth/twitter/callback',
-  passport.authenticate ('twitter', { failureRedirect: '/not-found' }), (req, res) => res.end ('All OK'));
+app.get ('/auth/twitter/callback',
+  passport.authenticate ('twitter', { successRedirect: '/', failureRedirect: '/not-found' }));
 
 app.get ('/:page?', (req, res, next) => {
   let pageRequest = req.params.page ? path.basename (req.params.page, '.html') : 'index';
