@@ -83,8 +83,15 @@ app.get ('/auth/twitter/callback', passport.authenticate ('twitter',
   }
 ));
 
+app.get ('/auth/logout', (req, res) => {
+  req.logout ();
+  res.redirect ('/');
+});
+
 app.get (['/', '/index'], (req, res) => {
-  res.render ('index', { auth_check: req.isAuthenticated () });
+  const userImages = [];
+
+  res.render ('index', { auth_check: req.isAuthenticated (), userImages });
 });
 
 app.get ('*', (req, res) => res.render ('not-found'));

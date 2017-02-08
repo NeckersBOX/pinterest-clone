@@ -2,22 +2,43 @@
   <head>
     <title>Pinterest Clone</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="images/favicon.ico" />
     <link rel="stylesheet" type="text/css" href="css/main-app.css">
     <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
   </head>
   <body>
-    <div class="main-menu">
-      <ul>
-        <li><a href="/">Home</a></li>
-      </ul>
+    <% if ( !auth_check ) { %>
+      <div class="main-menu">
+        <ul>
+          <li><a href="/">Home</a></li>
+        </ul>
 
-      <a href="/auth/twitter" class="social-button">
-        Twitter
-      </a>
-    </div>
+        <a href="/auth/twitter" class="social-button">
+          Twitter
+        </a>
+      </div>
+    <% } else { %>
+      <div class="main-menu">
+        <ul>
+          <li><a href="/">Home</a></li>
+          <li><a href="/mypin">My pin</a></li>
+          <li><a href="/addpin">Add pin</a></li>
+        </ul>
 
-    <div class="content">
-      <%- auth_check -%>
-    </div>
+        <a href="/auth/logout" class="social-button">
+          Logout
+        </a>
+      </div>
+    <% } %>
+
+    <% if ( userImages.length < 1 ) { %>
+      <h1 class="text-center">No images yet</h1>
+    <% } else {
+        userImages.forEach (function (image) { %>
+          <div class="pinclone-image">
+            <img src=<%= image.src %> />
+          </div>
+    <%  });
+       } %>
   </body>
 </html>
