@@ -39,9 +39,16 @@ passport.use (new twitterStrategy (
       const db = yield MongoClient.connect (process.env.mongoURI);
       const pinclone_users = db.collection ('pincline_users');
 
+      let doc = yield pinclone_users.findOne (profileInfo);
+      if ( doc ) {
+        db.close ();
+        cb (null, profileInfo);
+        return;
+      }
+
       let result = yield pinclone_users.insertOne (profileInfo);
       db.close ();
-      
+
       cb (null, profileInfo);
     }).catch (err => cb (err.stack, null));
   }
@@ -56,7 +63,7 @@ passport.deserializeUser((obj, cb) => {
 
     let doc = yield pinclone_users.findOne ({ id_str: obj });
     db.close ();
-
+    console.log ('deserialize', doc);
     cb (null, doc);
   }).catch (err => cb (err.stack, null));
 });
