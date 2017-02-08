@@ -22,18 +22,22 @@ passport.use (new twitterStrategy (
     callbackURL: '/auth/twitter/callback'
   },
   (accessToken, refreshToken, profile, cb) => {
-    console.warn ('profile', profile);
+    const profileInfo = {
+      id_str: profile._json.id_str,
+      screen_name: profile._json.screen_name,
+      name: profile._json.name,
+      image: profile._json.profile_image_url_https
+    };
+
+    console.log (profileInfo);
+    cb (null);
   }
 ));
 
 app.get ('/auth/twitter', passport.authenticate ('twitter'));
 
 app.get('/auth/twitter/callback',
-  passport.authenticate ('twitter', { failureRedirect: '/not-found' }),
-  (req, res) => {
-    res.redirect('/');
-  }
-);
+  passport.authenticate ('twitter', { successRedirect: '/', failureRedirect: '/not-found' }));
 
 app.get ('/:page?', (req, res, next) => {
   let pageRequest = req.params.page ? path.basename (req.params.page, '.html') : 'index';
