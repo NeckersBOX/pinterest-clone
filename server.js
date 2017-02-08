@@ -38,10 +38,7 @@ passport.use (new twitterStrategy (
   }
 ));
 
-passport.serializeUser(function(user, cb) {
-  console.log ('serializeUser', user);
-  cb(null, user);
-});
+passport.serializeUser ((user, cb) => cb (null, user.id_str));
 
 passport.deserializeUser(function(obj, cb) {
   console.log ('deserializeUser', obj);
