@@ -9,19 +9,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/masonry/4.1.1/masonry.pkgd.min.js"></script>
   </head>
   <body>
-    <% if ( !auth_check ) { %>
-      <div class="main-menu">
-        <ul>
-          <li><a href="/">Home</a></li>
-        </ul>
-
-        <a href="/auth/twitter" class="social-button">
-          Twitter
-        </a>
-      </div>
-    <% } else { %>
-      <% include auth_menu %>
-    <% } %>
+    <% include auth_menu %>
 
     <div align="center" class="container">
     <% if ( userImages.length < 1 ) { %>
@@ -31,7 +19,7 @@
           <div class="item pinclone-image">
             <img onerror='this.src="images/noimage.png"' src=<%= imageInfo.image %> />
             <h2><%= imageInfo.description %></h2>
-            <p>@<%= imageInfo.user.screen_name %></p>
+            <button id="remove" data-id=<%= imageInfo.date %>>Remove</button>
           </div>
     <%  });
        } %>

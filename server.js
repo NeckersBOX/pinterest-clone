@@ -92,22 +92,47 @@ app.get ('/auth/logout', (req, res) => {
 });
 
 app.get (['/', '/index'], (req, res) => {
-  const userImages = [];
+  let userImages = [];
 
-  res.render ('index', { auth_check: req.isAuthenticated (), userImages });
+  co (function *() {
+    const db = yield MongoClient.connect (process.env.mongoURI);
+    const pinclone_images = db.collection ('pinclone_images');
+
+    userImages = yield pinclone_images.find ().toArray ();
+
+    db.close ();
+
+    res.render ('index', { auth_check: req.isAuthenticated (), userImages });
+  }).catch (err => res.end (JSON.stringify ({ error: err.stack })));
+});
+
+app.get ('/mypin', isLoggedIn, (req, res) => {
+  let userImages = [];
+
+  co (function *() {
+    const db = yield MongoClient.connect (process.env.mongoURI);
+    const pinclone_images = db.collection ('pinclone_images');
+
+    userImages = yield pinclone_images.find ({ 'user.id_str': req.user.id_str }).toArray ();
+    db.close ();
+
+    res.render ('mypin', { userImages });
+  }).catch (err => res.end (JSON.stringify ({ error: err.stack })));
 });
 
 app.get ('/addpin', isLoggedIn, (req, res) => res.render ('addpin'));
+
 app.post ('/addpin', isLoggedIn, (req, res) => {
   co (function *() {
     const db = yield MongoClient.connect (process.env.mongoURI);
     const pinclone_images = db.collection ('pinclone_images');
 
     let result = yield pinclone_images.insertOne ({
-      user: req.user.id_str,
+      user: req.user,
       image: req.body.image,
       description: req.body.description.split ('').slice (0, 32).join (''),
-      date: Date.now ()
+      date: Date.now (),
+      like: 0
     });
 
     db.close ();
