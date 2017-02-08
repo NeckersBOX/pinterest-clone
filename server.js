@@ -3,56 +3,34 @@
 const Express = require ('express');
 const fs = require ('fs');
 const path = require ('path');
-const Flutter = require ('flutter');
-const session = require ('express-session');
-const request = require ('request');
-
-const postTwitterOptions = {
-  url: 'https://api.twitter.com/oauth/access_token',
-  method: 'POST',
-  headers: {
-    'User-Agent': 'NeckersPinterestClone/1.0',
-    'Content-Type': 'application/x-www-form-urlencoded'
-  }
-};
+const passport = require ('passport');
+const twitterStrategy = require ('passport-twitter').Strategy;
 
 const app = new Express ();
 
 app.use (Express.static ('dist'));
-app.use (session ({ secret: '$3cR3tC0d3R34lLy$&cR3t!' }));
 
-const flutter = new Flutter ({
-  cache: false,
-  consumerKey: 'Cia3AnMi7dkhG7JBhrfOQ5Fos',
-  consumerSecret: 'Tvji3GD9Zo8vIgLmNxXZOdqhtAxlORYeRbKI3vo23obl4gmWWQ',
-  loginCallback: 'https://neckers-pinclone.herokuapp.com/twitter/callback',
-
-  authCallback: (req, res) => {
-    if ( req.error )
-      return;
-
-    res.redirect ('/');
+passport.use (new twitterStrategy (
+  {
+    consumerKey: 'zXhcaCoQVUfHdiCri4dHJYXzN',
+    consumerSecret: '6RVO2uQX0yOmIbT9sWYLGAqAZeAR9WPlLTKrK1HRnAXuPXwyo4',
+    callbackURL: '/auth/twitter/callback'
+  },
+  (accessToken, refreshToken, profile, cb) => {
+    console.warn ('profile', profile);
   }
-});
+));
 
-app.get('/twitter/connect', flutter.connect);
-app.get('/twitter/callback', flutter.auth);
+app.get ('/auth/twitter', passport.authenticate ('twitter'));
+
+app.get('/auth/twitter/callback',
+  passport.authenticate ('twitter', { failureRedirect: '/not-found' }),
+  (req, res) => {
+    res.redirect('/');
+  }
+);
 
 app.get ('/:page?', (req, res, next) => {
-  const oauth_verified = req.query.oauth_verifier;
-
-  request (Object.assign ({}, postTwitterOptions, { form: { oauth_verified } }),
-    (err, response, body) => {
-      if ( !err && response.statusCode == 200 ) {
-        console.log ('body', body);
-      }
-
-      console.log (err);
-    }
-  );
-
-  console.warn (req.query);
-  console.warn (req.session);
   let pageRequest = req.params.page ? path.basename (req.params.page, '.html') : 'index';
 
   fs.readFile ('dist/html/' + pageRequest + '.html', 'utf8', (err, data) => {
