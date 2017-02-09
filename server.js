@@ -26,8 +26,8 @@ app.use (require ('express-session')({
 
 passport.use (new twitterStrategy (
   {
-    consumerKey: 'zXhcaCoQVUfHdiCri4dHJYXzN',
-    consumerSecret: '6RVO2uQX0yOmIbT9sWYLGAqAZeAR9WPlLTKrK1HRnAXuPXwyo4',
+    consumerKey: process.env.twitterConsumerKey,
+    consumerSecret: process.env.twitterConsumerSecret,
     callbackURL: '/auth/twitter/callback'
   },
   (accessToken, refreshToken, profile, cb) => {
