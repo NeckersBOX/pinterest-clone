@@ -6,7 +6,6 @@
     <link rel="stylesheet" type="text/css" href="css/main-app.css">
     <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/masonry/4.1.1/masonry.pkgd.min.js"></script>
   </head>
   <body>
     <% if ( !auth_check ) { %>
@@ -32,15 +31,28 @@
             <img onerror='this.src="images/noimage.png"' src=<%= imageInfo.image %> />
             <h2><%= imageInfo.description %></h2>
             <p>@<%= imageInfo.user.screen_name %></p>
+            <% if ( auth_check ) { %>
+              <button class="like" data-image=<%= imageInfo.date %> data-user=<%= imageInfo.user.id_str %>>
+                Like <span><%= imageInfo.like %></span>
+              </button>
+            <% } %>
           </div>
     <%  });
        } %>
-    </div>
 
+    </div>
     <script>
-      $('#container').masonry ({
-        itemSelector: '.item',
-        columnWidth: 70
+      $('.like').click (function () {
+        let $this = $(this);
+        $.getJSON ('/like/' + $this.data ('user') + '/' + $this.data ('image'),
+          function (data) {
+            if ( data.error ) {
+              console.warn (data.error);
+              return;
+            }
+
+            $this.children ().text (data.like);
+        });
       });
     </script>
   </body>

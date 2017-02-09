@@ -119,11 +119,44 @@ a
     font-size: 16px
     text-align: center
 
-  p
+  p, a
     color: $pinclone-user
     background-color: $pinclone-user-background
     margin: 0
     padding: 8px
+
+  a
+    width: 334px
+    display: inline-block
+
+    &:hover, &:focus
+      background-color: $pinclone-user-hover-background
+      color: $pinclone-user-hover
+
+.like
+  width: 100%
+  font-size: 16px
+  padding: 8px 0px
+  font-family: $base-font-family
+  font-weight: bold
+  background-color: $pinclone-like-background
+  color: $pinclone-like-color
+  cursor: pointer
+  border-width: 0
+
+  &:hover, &:focus
+    background-color: $pinclone-like-background-hover
+    color : $pinclone-like-color-hover
+
+  &.no-hover
+    cursor: default
+
+    &:hover, &:focus
+      background-color: $pinclone-like-background
+      color : $pinclone-like-color
+
+  span
+    font-weight: normal
 
 .text-center
   text-align: center

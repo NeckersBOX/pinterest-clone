@@ -120,6 +120,45 @@ app.get ('/mypin', isLoggedIn, (req, res) => {
   }).catch (err => res.end (JSON.stringify ({ error: err.stack })));
 });
 
+app.get ('/remove-image/:date', isLoggedIn, (req, res) => {
+  co (function *() {
+    const db = yield MongoClient.connect (process.env.mongoURI);
+    const pinclone_images = db.collection ('pinclone_images');
+
+    let result = yield pinclone_images.findOneAndDelete ({
+      'user.id_str': req.user.id_str,
+      'date': +req.params.date
+    });
+
+    db.close ();
+
+    res.redirect ('/mypin');
+  }).catch (err => res.end (JSON.stringify ({ error: err.stack })));
+});
+
+app.get ('/like/:user/:date', isLoggedIn, (req, res) => {
+  co (function *() {
+    const db = yield MongoClient.connect (process.env.mongoURI);
+    const pinclone_images = db.collection ('pinclone_images');
+
+    let doc = yield pinclone_images.findOne ({
+      'date': +req.params.date,
+      'user.id_str': req.params.user
+    });
+
+    if ( !doc ) {
+      res.end (JSON.stringify ({ error: 'image not found' }));
+      db.close ();
+      return;
+    }
+
+    let result = yield pinclone_images.findOneAndUpdate (doc, { $set: { like: doc.like + 1 } });
+    db.close ();
+
+    res.end (JSON.stringify ({ like: doc.like + 1 }));
+  }).catch (err => res.end (JSON.stringify ({ error: err.stack })));
+});
+
 app.get ('/addpin', isLoggedIn, (req, res) => res.render ('addpin'));
 
 app.post ('/addpin', isLoggedIn, (req, res) => {
@@ -129,7 +168,7 @@ app.post ('/addpin', isLoggedIn, (req, res) => {
 
     let result = yield pinclone_images.insertOne ({
       user: req.user,
-      image: req.body.image,
+      image: req.body.image.split ('').slice (0, 512).join (''),
       description: req.body.description.split ('').slice (0, 32).join (''),
       date: Date.now (),
       like: 0

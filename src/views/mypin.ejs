@@ -6,7 +6,6 @@
     <link rel="stylesheet" type="text/css" href="css/main-app.css">
     <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/masonry/4.1.1/masonry.pkgd.min.js"></script>
   </head>
   <body>
     <% include auth_menu %>
@@ -19,17 +18,11 @@
           <div class="item pinclone-image">
             <img onerror='this.src="images/noimage.png"' src=<%= imageInfo.image %> />
             <h2><%= imageInfo.description %></h2>
-            <button id="remove" data-id=<%= imageInfo.date %>>Remove</button>
+            <a href=<%= "/remove-image/" + imageInfo.date %>>Remove</a>
+            <button class="like no-hover">Like <span><%= imageInfo.like %></span></button>
           </div>
     <%  });
        } %>
     </div>
-
-    <script>
-      $('#container').masonry ({
-        itemSelector: '.item',
-        columnWidth: 70
-      });
-    </script>
   </body>
 </html>
